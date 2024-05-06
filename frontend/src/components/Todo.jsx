@@ -1,6 +1,7 @@
 import React from 'react'
 import sun from "../assets/images/icon-sun.svg"
 import Input from './Input'
+import Todos from './Todos'
 
 function Todo() {
   return (
@@ -13,6 +14,8 @@ function Todo() {
 
             <main>
                 <Input />
+
+                <Todos />
             </main>
 
         </div>
