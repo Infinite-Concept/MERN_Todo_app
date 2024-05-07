@@ -5,12 +5,14 @@ import Body from './components/Body'
 import Todo from './components/Todo'
 
 function App() {
+
   return (
     <div className='home'>
       <Banner />
       <Body />
       <Todo />
     </div>
+    
   )
 }
 

@@ -51,6 +51,8 @@ app.post("/todo", async (req, res) => {
     }
 })
 
+// app.delete("/todo", async())
+
 app.listen(port , () => {
     console.log(`server is listening on port ${port}`);
 })
