@@ -22,42 +22,25 @@ function Todos() {
         Fetch()
     }, [data])
 
-    function handleOndragEnd(result){}
-
   return (
    <div className="list">
-     <div className="list_todo">
-        {
-            data.length == 0 ? <div></div> : 
-            
-            <DragDropContext onDragEnd={handleOndragEnd}>
-                <Droppable droppableId='boxes'>
-                    {(provided) => (
-                        <ul ref={provided.innerRef} {...provided.droppableProps}>
-                        {
-                            data.map((todo, index) => {
-                                return(
-                                    <Draggable key={index} draggableId={todo._id.toString()} index={index}>
-                                        {(provided) => (
-                                            <li>
-                                                <div className="complete"></div>
-                                                <div className="text">{todo.todo}</div>
-                                            </li>
-                                        )}
-                                        
-                                    </Draggable>
-                                )
-                            })
-                        }
-                            {provided.placeholder}
-                        </ul>
-                    )}
+        <div className="list_todo">
+            {
+                data.length == 0 ? <div></div> : 
+                <ul>
+                    {
+                        data.map((todo, index) => {
+                            return(
+                                <li>
+                                    <div className="complete"></div>
+                                    <div className="text">{todo.todo}</div>
+                                </li>
+                            )}
+                        )
+                    }
+                </ul>
+            }
                     
-                </Droppable>
-            </DragDropContext>
-        }
-        
-
         <div className="bottom">
             <p><span>5</span> items left</p>
 

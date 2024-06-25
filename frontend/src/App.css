@@ -64,7 +64,7 @@ img{
 .wrapper{
   background-color: var(--Very-Dark-Blue);
   width: 100%;
-  min-height: 63vh;
+  min-height: 500px;
   position: relative;
 }
 
