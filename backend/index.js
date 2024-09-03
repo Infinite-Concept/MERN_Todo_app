@@ -37,7 +37,12 @@ app.post("/todo", async (req, res) => {
     try{
         const todo = req.body.todo 
 
-        console.log(todo);
+        if(todo.length === ""){
+            return res.json({
+                status: false,
+                message: "Input field id required"
+            })
+        }
 
         const user = await Todo.create({
             todo: todo
@@ -45,9 +50,14 @@ app.post("/todo", async (req, res) => {
 
         await user.save()
 
-        res.status(200).json({message: "todo successfull added"})
+        let savedTodo = await Todo.find()
+        
+        res.status(200).json({
+            status: true,
+            message: "todo successfull added",
+            data: savedTodo
+        })
     
-
     }catch(err){
         res.status(500).json({message: "request not process"})
         console.log(err);
@@ -56,28 +66,93 @@ app.post("/todo", async (req, res) => {
 
 app.delete("/todo/:id", async(req, res) => {
     try {
-
         const {id} = req.params
-
-        const data = await Todo.findById(id)
+        const data = await Todo.findByIdAndDelete(id.toString())
 
         if(!data){
-            res.json({
+            return res.json({
                 status: false,
                 message: "Todo item not found"
             })
         }
 
-        await Todo.deleteOne()
+        let todo = await Todo.find()
 
         res.status(200).json({
-            status: false,
-            message: "Todo has been deleted"
+            status: true,
+            message: "Todo has been deleted",
+            data: todo
         })
 
     } catch (error) {
         console.error("internal server error", error);
         res.status(500).json({message: "internal server error"})        
+    }
+})
+
+app.delete("/complete/todo", async (req, res) => {
+    try {
+
+        let completedTodos = await Todo.deleteMany({ isCompleted: true });
+
+        if(!completedTodos){
+            return res.json({
+                status: false,
+                message: "Unable to delete todo"
+            })
+        }
+
+        let savedTodo = await Todo.find()
+
+        res.json({
+            status: true,
+            message: 'Completed todos deleted successfully',
+            data: savedTodo
+        });
+        
+    } catch (error) {
+        console.error("Internal server error");
+        res.status(500).json({message: "Internal server error" })
+    }
+})
+
+app.put("/todo/:id", async (req, res) => {
+    try {
+        let { id } = req.params
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.json({
+                status: false,
+                message: 'Invalid ID format'
+            });
+        }
+
+        const todo = await Todo.findById(id)
+
+        if(!todo){
+            return res.json({
+                status: false,
+                message: 'Todo item not found'
+            })
+        }
+
+        let data = todo.isCompleted = !todo.isCompleted
+
+        console.log(data);
+
+        await todo.save();
+
+        let savedTodo = await Todo.find()
+        
+        res.json({
+            status: true,
+            message: 'Todo item updated successfully',
+            data: savedTodo
+        });
+
+    } catch (error) {
+        console.error("internal server error");
+        res.status(500).json({message: "Internal server error"})
     }
 })
 

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import sun from "../assets/images/icon-sun.svg"
 import Input from './Input'
 import Todos from './Todos'
 
 function Todo() {
+  const[data, setData] = useState([])
   return (
     <div className='todo'>
         <div className="inner">
@@ -13,9 +14,9 @@ function Todo() {
             </header>
 
             <main>
-                <Input />
+                <Input setData={setData} />
 
-                <Todos />
+                <Todos data={data} setData={setData} />
             </main>
 
         </div>

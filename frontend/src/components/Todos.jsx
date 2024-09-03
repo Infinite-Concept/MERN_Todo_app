@@ -4,13 +4,10 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import TodoItem from './TodoItem';
 
-function Todos() {
-
-    const[data, setData] = useState([])
+function Todos({data, setData}) {
 
     const Fetch = async () => {
         const todo = await axios.get("http://localhost:3500/todo")
-
         setData(todo.data)
     }
 
@@ -24,7 +21,17 @@ function Todos() {
         updatedData.splice(toIndex, 0, movedTodo);
         setData(updatedData);
     };
-    
+
+    const clearComplete = async () => {
+        try {
+            let response = await axios.delete("http://localhost:3500/complete/todo")
+            console.log(response);
+            
+        } catch (error) {
+            console.error(error);
+            
+        }
+    }
 
   return (
    <div className="list">
@@ -35,7 +42,7 @@ function Todos() {
                     <ul key="todo-list">
                         {
                             data.map((todo, index) => (
-                                <TodoItem key={todo.id} todo={todo} index={index} moveTodo={moveTodo} />
+                                <TodoItem key={todo._id} todo={todo} index={index} moveTodo={moveTodo} setData={setData} />
                             ))
                         }
                     </ul>
@@ -51,7 +58,7 @@ function Todos() {
                     <li>Completed</li>
                 </ul>
 
-                <p className='clear'>Clear Completed</p>
+                <p className='clear' onClick={clearComplete}>Clear Completed</p>
             </div>
         
         </div>

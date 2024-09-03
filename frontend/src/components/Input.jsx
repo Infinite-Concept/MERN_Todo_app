@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import axios from "axios"
 
-function Input() {
+function Input({setData}) {
   const[todo, setTodo] = useState('')
   const[error, setError] = useState(false)
 
@@ -11,8 +11,10 @@ function Input() {
       console.log("emap");
     }else{
       const response = await axios.post("http://localhost:3500/todo", { todo: todo })
-      console.log("form data submitted successful", response);
-      setTodo("")
+      if(response.data.status){
+        setTodo("")
+        setData(response.data.data)
+      }
     }
   }
 
