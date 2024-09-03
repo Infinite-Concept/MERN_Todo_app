@@ -3,6 +3,9 @@ const mongoose = require("mongoose")
 const Todo = require("./models/todo")
 const cors = require("cors")
 
+console.log(Todo);
+
+
 mongoose.connect("mongodb://localhost/todo", {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -51,7 +54,32 @@ app.post("/todo", async (req, res) => {
     }
 })
 
-// app.delete("/todo", async())
+app.delete("/todo/:id", async(req, res) => {
+    try {
+
+        const {id} = req.params
+
+        const data = await Todo.findById(id)
+
+        if(!data){
+            res.json({
+                status: false,
+                message: "Todo item not found"
+            })
+        }
+
+        await Todo.deleteOne()
+
+        res.status(200).json({
+            status: false,
+            message: "Todo has been deleted"
+        })
+
+    } catch (error) {
+        console.error("internal server error", error);
+        res.status(500).json({message: "internal server error"})        
+    }
+})
 
 app.listen(port , () => {
     console.log(`server is listening on port ${port}`);

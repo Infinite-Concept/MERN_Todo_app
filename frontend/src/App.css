@@ -152,12 +152,24 @@ main{
   width: 100%;
 }
 
-.list_todo > ul li{
-  padding: 15px;
+.list_todo--item{
+  width: 100%;
+  padding: 18px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
   border-bottom: 1px solid var(--Very-Dark-Grayish-Blue1);
+  cursor: pointer;
+  height: 100%;
+  gap: 10px;
+  transition: .5s ease-out;
+}
+
+.todo__content{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .complete{
@@ -165,6 +177,19 @@ main{
   height: 20px;
   border: 1px solid var(--Very-Dark-Grayish-Blue1);
   border-radius: 50%;
+}
+
+.close_icon{
+  color: var(--Very-Dark-Grayish-Blue1);
+  font-size: 25px;
+  padding: 0;
+  margin: 0;
+  display: none;
+  transition: .5s ease-out;
+}
+
+.list_todo--item:hover .close_icon{
+  display: block;
 }
 
 .text{
