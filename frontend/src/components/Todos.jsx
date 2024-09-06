@@ -6,13 +6,19 @@ import TodoItem from './TodoItem';
 
 function Todos({data, setData}) {
 
+    const[showTodoItem, setShowTodoItem] = useState("all")
+
     const Fetch = async () => {
         const todo = await axios.get("http://localhost:3500/todo")
-        setData(todo.data)
+        let todoItem = await todo.data
+        return todoItem
     }
 
     useEffect(() => {
-        Fetch()
+        return async () => {
+            let fetchTodo = await Fetch()
+            setData(fetchTodo);
+        }
     }, [])
 
     const moveTodo = (fromIndex, toIndex) => {
@@ -25,12 +31,33 @@ function Todos({data, setData}) {
     const clearComplete = async () => {
         try {
             let response = await axios.delete("http://localhost:3500/complete/todo")
-            console.log(response);
-            
+            if(response.data.status){
+                setData(response.data.data)
+            }   
         } catch (error) {
             console.error(error);
             
         }
+    }
+
+    const showComplete = async () => {
+        let fetchTodo = await Fetch()
+        let complete = fetchTodo.filter(item => item.isCompleted == true)
+        setData(complete)
+        setShowTodoItem("complete")
+    }
+
+    const showAll = async () => {
+        let fetchTodo = await Fetch()
+        setData(fetchTodo);
+        setShowTodoItem("all")
+    }
+
+    const showActive = async () => {
+        let fetchTodo = await Fetch()
+        let active = fetchTodo.filter(item => item.isCompleted !== true)
+        setData(active)
+        setShowTodoItem("active")
     }
 
   return (
@@ -38,7 +65,10 @@ function Todos({data, setData}) {
         <div className="list_todo">
             <DndProvider backend={HTML5Backend}>
                 {
-                    data.length == 0 ? <div></div> : 
+                    data.length == 0 ? <div className='no-todo'>
+                        <p>No todo available now</p>
+                        <span>Create todo</span>
+                    </div> : 
                     <ul key="todo-list">
                         {
                             data.map((todo, index) => (
@@ -52,10 +82,10 @@ function Todos({data, setData}) {
             <div className="bottom">
                 <p><span>{data.length}</span> items left</p>
 
-                <ul>
-                    <li className='active'>All</li>
-                    <li>Active</li>
-                    <li>Completed</li>
+                <ul className='bottom__section'>
+                    <li className={`${showTodoItem == 'all' && 'active'}`} onClick={showAll}>All</li>
+                    <li className={`${showTodoItem == 'active' && 'active'}`} onClick={showActive}>Active</li>
+                    <li className={`${showTodoItem == 'complete' && 'active'}`} onClick={showComplete}>Completed</li>
                 </ul>
 
                 <p className='clear' onClick={clearComplete}>Clear Completed</p>

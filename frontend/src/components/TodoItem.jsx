@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React from 'react'
 import { useDrag, useDrop } from 'react-dnd';
+import cross from "../assets/images/icon-cross.svg"
+import check from "../assets/images/icon-check.svg"
 
 function TodoItem({ todo, index, moveTodo, setData }) {
     const ref = React.useRef(null);
@@ -36,9 +38,9 @@ function TodoItem({ todo, index, moveTodo, setData }) {
     const completeTodo = async (id) => {
         try {
             let response = await axios.put(`http://localhost:3500/todo/${id}`)
-
-            console.log(response);
-            
+            if(response.data.status){
+                setData(response.data.data)
+            }
         } catch (error) {
             console.error(error);
             
@@ -48,10 +50,12 @@ function TodoItem({ todo, index, moveTodo, setData }) {
   return (
     <li ref={ref} key={todo._id} className="list_todo--item">
         <div className="todo__content">
-            <div className="complete" onClick={() => completeTodo(todo._id)}></div>
-            <p className="text">{todo.todo}</p>
+            <div className={`complete ${todo.isCompleted ? 'todo--complete' : ""}`} onClick={() => completeTodo(todo._id)}></div>
+            <p className={`text ${todo.isCompleted ? "text--complete" : ''}`} >{todo.todo}</p>
         </div>
-        <p className='close_icon' onClick={()=> deleteTodo(todo._id)}>&#x2715;</p>
+        <div className='close_icon' onClick={()=> deleteTodo(todo._id)}>
+            <img src={cross} alt="close icon" />
+        </div>
     </li>
   )
 }

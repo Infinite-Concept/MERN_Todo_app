@@ -156,6 +156,24 @@ app.put("/todo/:id", async (req, res) => {
     }
 })
 
+app.post("/rearrange-todos", async (req, res) => {
+    try {
+
+        const {newOrder} = req.body
+
+        for(let i = 0; i < newOrder; i++){
+            const itemId = newOrder[i]._id;
+            await Todo.findByIdAndUpdate(itemId, {})
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+})
+
 app.listen(port , () => {
     console.log(`server is listening on port ${port}`);
 })

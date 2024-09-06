@@ -8,23 +8,37 @@
 }
 
 :root{
-  /* ### Light Theme */
-
-  --Very-Light-Gray: hsl(0, 0%, 98%);
-  --Very-Light-Grayish-Blue: hsl(236, 33%, 92%);
-  --Light-Grayish-Blue: hsl(233, 11%, 84%);
-  --Dark-Grayish-Blue: hsl(236, 9%, 61%);
-  --Very-Dark-Grayish-Blue: hsl(235, 19%, 35%);
+  --Dark-Grayish-Blue: hsl(234, 11%, 52%);
+  --Bright-Blue: hsl(220, 98%, 61%);
 
   /* ### Dark Theme */
+  --Light-Grayish-Blue-hover: hsl(236, 33%, 92%);
+  --Very-Dark-Grayish-Blue1: hsl(237, 14%, 26%);
+  --Light-Grayish: hsl(233, 11%, 84%);
+}
 
+[data-theme='light']{
+  --Very-Light-Grayish-Blue: hsl(236, 33%, 92%);
+  /* --Dark-Grayish-Blue: hsl(236, 9%, 61%); */
+  --background: url(./assets/images/bg-desktop-light.jpg);
+  --Very-Dark-Blue: hsl(0, 5%, 94%);
+  --Very-Dark-Desaturated-Blue: hsl(0, 0%, 98%);
+  --Very-Dark-Grayish-Blue: hsl(236, 33%, 92%);
+  --Light-Grayish-Blue: hsl(237, 14%, 26%);
+  --Dark-Grayish-Blue-com: hsl(233, 11%, 84%);
+}
+
+[data-theme='dark']{
+  --Very-Light-Gray: hsl(0, 0%, 98%);
+  --Very-Light-Grayish-Blue: hsl(236, 33%, 92%);
+  
+  /* --Very-Dark-Grayish-Blue: hsl(233, 14%, 35%); */
+  --background: url(./assets/images/bg-desktop-dark.jpg);
   --Very-Dark-Blue: hsl(235, 21%, 11%);
   --Very-Dark-Desaturated-Blue: hsl(235, 24%, 19%);
+  --Very-Dark-Grayish-Blue: hsl(237, 14%, 26%);
   --Light-Grayish-Blue: hsl(234, 39%, 85%);
-  --Light-Grayish-Blue-hover: hsl(236, 33%, 92%);
-  --Dark-Grayish-Blue: hsl(234, 11%, 52%);
-  --Very-Dark-Grayish-Blue: hsl(233, 14%, 35%);
-  --Very-Dark-Grayish-Blue1: hsl(237, 14%, 26%);
+  --Dark-Grayish-Blue-com: hsl(237, 14%, 26%);
 }
 
 ::placeholder{
@@ -53,7 +67,7 @@ img{
 
 .banner{
   width: 100%;
-  background-image: url(./assets/images/bg-desktop-dark.jpg);
+  background-image: var(--background);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -74,6 +88,7 @@ img{
   display: flex;
   width: 100%;
   justify-content: center;
+  padding: 0 5%;
 }
 
 .inner{
@@ -112,8 +127,8 @@ main{
 }
 
 .form-group label{
-  width: 20px;
-  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   display: block;
   border: 1px solid var(--Very-Dark-Grayish-Blue1);
   border-radius: 50%;
@@ -144,6 +159,7 @@ main{
   background-color: var(--Very-Dark-Desaturated-Blue);
   margin-top: 30px;
   border-radius: 5px;
+  position: relative;
 }
 
 .list_todo > ul{
@@ -159,7 +175,7 @@ main{
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  border-bottom: 1px solid var(--Very-Dark-Grayish-Blue1);
+  border-bottom: 1px solid var(--Very-Dark-Grayish-Blue);
   cursor: pointer;
   height: 100%;
   gap: 10px;
@@ -170,22 +186,31 @@ main{
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: center;
 }
 
 .complete{
-  width: 20px;
-  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   border: 1px solid var(--Very-Dark-Grayish-Blue1);
   border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.todo--complete{
+  background-image: url(./assets/images/icon-check.svg), linear-gradient(hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+  border: none;
 }
 
 .close_icon{
   color: var(--Very-Dark-Grayish-Blue1);
-  font-size: 25px;
   padding: 0;
   margin: 0;
   display: none;
   transition: .5s ease-out;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 .list_todo--item:hover .close_icon{
@@ -195,6 +220,12 @@ main{
 .text{
   color: var(--Light-Grayish-Blue);
   font-size: 18px;
+  word-break: break-all;
+}
+
+.text--complete{
+  text-decoration: 1px solid line-through;
+  color: var(--Dark-Grayish-Blue-com);
 }
 
 .bottom{
@@ -206,17 +237,19 @@ main{
 
 .bottom p{
   font-size: 14px !important;
-  color: var(--Very-Dark-Grayish-Blue);
+  color: var(--Dark-Grayish-Blue);
 }
 
-.bottom ul{
+.bottom__section{
   display: flex;
+  position: relative;
   gap: 10px;
 }
 
 .bottom ul li{
-  font-size: 16px;
-  color: var(--Very-Dark-Grayish-Blue);
+  font-size: 14px;
+  color: var(--Dark-Grayish-Blue);
+  text-transform: capitalize;
 }
 
 .bottom ul li.active{
@@ -237,8 +270,40 @@ main{
 
 .footer p{
   text-align: center;
-  color: var(--Very-Dark-Grayish-Blue);
+  color: var(--Dark-Grayish-Blue);
 }
-body{
-  cursor: pointer;
+
+.no-todo{
+  padding: 25px 0;
+}
+
+.no-todo p{
+  margin-bottom: 10px;
+}
+
+.no-todo p,
+.no-todo span{
+  text-align: center;
+  display: block;
+  font-size: 16px;
+  color: var(--Light-Grayish-Blue);
+  text-transform: capitalize;
+}
+
+@media screen and (max-width: 425px) {
+  .bottom__section{
+    position: absolute;
+    bottom: -60px;
+    background-color: var(--Very-Dark-Desaturated-Blue);
+    padding: 10px 20px;
+    width: 100%;
+    left: 0;
+    border-radius: 5px;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .footer{
+    margin-top: 80px;
+  }
 }
