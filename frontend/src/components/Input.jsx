@@ -30,7 +30,7 @@ function Input({setData}) {
           </button>
       </div>
 
-      {error && <p>field must not be empty</p>}
+      {error && <p className='error'>field must not be empty</p>}
     </>
   )
 }

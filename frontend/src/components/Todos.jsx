@@ -7,25 +7,39 @@ import TodoItem from './TodoItem';
 function Todos({data, setData}) {
 
     const[showTodoItem, setShowTodoItem] = useState("all")
+    const [loading, setLoading] = useState(false);
 
     const Fetch = async () => {
+        setLoading(true);
         const todo = await axios.get("http://localhost:3500/todo")
         let todoItem = await todo.data
+        setLoading(false);
         return todoItem
     }
 
     useEffect(() => {
-        return async () => {
-            let fetchTodo = await Fetch()
+        const fetchData = async () => {
+            let fetchTodo = await Fetch();
             setData(fetchTodo);
         }
+        
+        fetchData();
     }, [])
 
-    const moveTodo = (fromIndex, toIndex) => {
+    const moveTodo = async (fromIndex, toIndex) => {
         const updatedData = [...data];
         const [movedTodo] = updatedData.splice(fromIndex, 1);
         updatedData.splice(toIndex, 0, movedTodo);
-        setData(updatedData);
+
+        const prevData = [...data];
+
+        try {
+            await axios.post("http://localhost:3500/rearrange-todos", {newOrder: updatedData})
+            setData(updatedData);
+        } catch (error) {
+            console.error(error);
+            setData(prevData);
+        }
     };
 
     const clearComplete = async () => {
@@ -41,10 +55,14 @@ function Todos({data, setData}) {
     }
 
     const showComplete = async () => {
-        let fetchTodo = await Fetch()
-        let complete = fetchTodo.filter(item => item.isCompleted == true)
-        setData(complete)
-        setShowTodoItem("complete")
+        try {
+            let fetchTodo = await Fetch()
+            let complete = fetchTodo.filter(item => item.isCompleted == true)
+            setData(complete)
+            setShowTodoItem("complete")
+        } catch (error) {
+            console.error("Error fetching completed todos", error);
+        }
     }
 
     const showAll = async () => {
@@ -63,21 +81,29 @@ function Todos({data, setData}) {
   return (
    <div className="list">
         <div className="list_todo">
-            <DndProvider backend={HTML5Backend}>
-                {
-                    data.length == 0 ? <div className='no-todo'>
-                        <p>No todo available now</p>
-                        <span>Create todo</span>
-                    </div> : 
-                    <ul key="todo-list">
+            {
+                loading ? (
+                    <div className="loadingCenter">
+                        <div class="lds-dual-ring"></div>
+                    </div>
+                ) : (
+                    <DndProvider backend={HTML5Backend}>
                         {
-                            data.map((todo, index) => (
-                                <TodoItem key={todo._id} todo={todo} index={index} moveTodo={moveTodo} setData={setData} />
-                            ))
+                            data.length == 0 ? <div className='no-todo'>
+                                <p>No todo available now</p>
+                            </div> : 
+                            <ul key="todo-list">
+                                {
+                                    data.map((todo, index) => (
+                                        <TodoItem key={todo._id} todo={todo} index={index} moveTodo={moveTodo} setData={setData} />
+                                    ))
+                                }
+                            </ul>
                         }
-                    </ul>
-                }
-            </DndProvider>
+                    </DndProvider>
+                )
+            }
+            
 
             <div className="bottom">
                 <p><span>{data.length}</span> items left</p>

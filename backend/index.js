@@ -3,8 +3,6 @@ const mongoose = require("mongoose")
 const Todo = require("./models/todo")
 const cors = require("cors")
 
-console.log(Todo);
-
 
 mongoose.connect("mongodb://localhost/todo", {
     useNewUrlParser: true,
@@ -17,7 +15,7 @@ mongoose.connect("mongodb://localhost/todo", {
 
 const app = express()
 app.use(cors())
-const port = 3500 || 3000
+const port = process.env.PORT || 3500;
 
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
@@ -25,10 +23,23 @@ app.use(express.json())
 app.get("/todo", async (req, res) => {
     try {
         const todo = await Todo.find()
-    
-        res.json(todo)
+        let orderedTodos = [];
+        let unorderedTodos = [];
+
+        for (let i = 0; i < todo.length; i++) {
+            if (todo[i].order !== undefined) {
+                orderedTodos.push(todo[i]);
+            } else {
+                unorderedTodos.push(todo[i]);
+            }
+        }
+
+        orderedTodos.sort((a, b) => a.order - b.order);
+        
+        let allTodo = [...unorderedTodos, ...orderedTodos]
+        res.json( allTodo )
     } catch (error) {
-        console.error(err);
+        console.error(error);
         res.status(500).send('Error fetching todos.');
     }
 })
@@ -37,18 +48,16 @@ app.post("/todo", async (req, res) => {
     try{
         const todo = req.body.todo 
 
-        if(todo.length === ""){
+        if(!todo || todo.trim() === ""){
             return res.json({
                 status: false,
-                message: "Input field id required"
+                message: "Input field is required"
             })
         }
 
-        const user = await Todo.create({
+        await Todo.create({
             todo: todo
         })
-
-        await user.save()
 
         let savedTodo = await Todo.find()
         
@@ -95,11 +104,11 @@ app.delete("/complete/todo", async (req, res) => {
 
         let completedTodos = await Todo.deleteMany({ isCompleted: true });
 
-        if(!completedTodos){
+        if (completedTodos.deletedCount === 0) {
             return res.json({
                 status: false,
-                message: "Unable to delete todo"
-            })
+                message: "No completed todos to delete"
+            });
         }
 
         let savedTodo = await Todo.find()
@@ -138,8 +147,6 @@ app.put("/todo/:id", async (req, res) => {
 
         let data = todo.isCompleted = !todo.isCompleted
 
-        console.log(data);
-
         await todo.save();
 
         let savedTodo = await Todo.find()
@@ -161,10 +168,13 @@ app.post("/rearrange-todos", async (req, res) => {
 
         const {newOrder} = req.body
 
-        for(let i = 0; i < newOrder; i++){
-            const itemId = newOrder[i]._id;
-            await Todo.findByIdAndUpdate(itemId, {})
-        }
+        await Promise.all(
+            newOrder.map((item, index) =>
+                Todo.findByIdAndUpdate(item._id, { order: index })
+            )
+        );
+
+        res.status(200).send("Items rearranged successfully")
         
     } catch (error) {
         console.log(error);
